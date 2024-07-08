@@ -4,9 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 import com.example.demo.exception.MarkethingException;
 import com.example.demo.exception.type.ErrorCode;
@@ -48,7 +45,7 @@ public class MarketPurchaseRequestServiceImplTest {
     private static final GeometryFactory geometryFactory = new GeometryFactory();
 
     @Test
-    void createMarketPurchaseRequest() throws Exception {
+    void createMarketPurchaseRequest() {
         //given
         Market market = getMarket();
         SiteUser siteUser = getSiteUser();
@@ -72,7 +69,7 @@ public class MarketPurchaseRequestServiceImplTest {
     }
 
     @Test
-    void createFailedByUserNotFound() throws Exception {
+    void createFailedByUserNotFound(){
         // given
         given(siteUserRepository.findById(any())).willReturn(Optional.empty());
 
@@ -82,37 +79,6 @@ public class MarketPurchaseRequestServiceImplTest {
 
         // then
         assertEquals(exception.getErrorCode(), ErrorCode.USER_NOT_FOUND);
-    }
-
-    @Test
-    void deleteMarketPurchaseRequest() throws Exception {
-        //given
-        Market market = getMarket();
-        SiteUser siteUser = getSiteUser();
-        MarketPurchaseRequestDto marketPurchaseRequestDto = getMarketPurchaseRequestDto(siteUser, market);
-        MarketPurchaseRequest marketPurchaseRequest = marketPurchaseRequestDto.toEntity(siteUser, market);
-
-        // mocking
-        given(marketPurchaseRequestRepository.findById(any())).willReturn(Optional.ofNullable(marketPurchaseRequest));
-
-        // when
-        marketPurchaseRequestServiceImpl.deleteMarketPurchaseRequest(marketPurchaseRequest.getId());
-
-        // then
-        verify(marketPurchaseRequestRepository,times(1)).delete(marketPurchaseRequest);
-    }
-
-    @Test
-    void deleteFailedByRequestNotFound() throws Exception {
-        // given
-        given(marketPurchaseRequestRepository.findById(any())).willReturn(Optional.empty());
-
-        // when
-        MarkethingException exception = assertThrows(MarkethingException.class,
-                () -> marketPurchaseRequestServiceImpl.deleteMarketPurchaseRequest(1L));
-
-        // then
-        assertEquals(exception.getErrorCode(), ErrorCode.REQUEST_NOT_FOUND);
 
     }
 

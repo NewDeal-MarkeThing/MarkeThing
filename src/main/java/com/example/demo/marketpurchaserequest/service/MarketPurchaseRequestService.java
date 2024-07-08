@@ -7,6 +7,4 @@ public interface MarketPurchaseRequestService {
 
     MarketPurchaseRequest createMarketPurchaseRequest(
             MarketPurchaseRequestDto marketPurchaseRequestDto);
-
-    void deleteMarketPurchaseRequest(Long id);
 }
