@@ -16,12 +16,7 @@ $(document).ready(function () {
         $("#nickname").val(user.nickname);
         $("#phoneNumber").val(user.phoneNumber);
         $("#address").val(user.address);
-        //$("#profileLink").val(user.profileImg);
         $("#profilePictureDisplay").attr("src", user.profileImg);
-
-        // 파일 선택 영역에 파일 이름 표시
-        // var fileName = user.profileImg ? user.profileImg.split('/').pop() : '';
-        // //$("#profilePictureLabel").html(fileName);
       },
       error: function (error) {
         console.error('Error fetching user information:', error);
