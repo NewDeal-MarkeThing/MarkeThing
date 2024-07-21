@@ -27,6 +27,7 @@ public class AuthService {
 
     private final SiteUserRepository siteUserRepository;
     private final PasswordEncoder passwordEncoder;
+
     @Autowired
     PhoneAuthService phoneAuthService;
     private final KakaoLocalService kakaoLocalService;

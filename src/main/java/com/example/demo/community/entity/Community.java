@@ -17,6 +17,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedAttributeNode;
+import javax.persistence.NamedEntityGraph;
+import javax.persistence.NamedEntityGraphs;
+import javax.persistence.NamedSubgraph;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -39,6 +43,14 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @DynamicUpdate
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "COMMUNITY")
+@NamedEntityGraph(
+        name = "Community.withCommentsAndReplies",
+        attributeNodes = @NamedAttributeNode(value = "comments", subgraph = "commentsWithReplies"),
+        subgraphs = @NamedSubgraph(
+                name = "commentsWithReplies",
+                attributeNodes = @NamedAttributeNode("replyComments")
+        )
+)
 public class Community {
 
     @Id

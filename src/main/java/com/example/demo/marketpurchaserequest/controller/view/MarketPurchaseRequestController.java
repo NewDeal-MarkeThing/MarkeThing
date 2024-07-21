@@ -31,4 +31,9 @@ public class MarketPurchaseRequestController {
         model.addAttribute("latlon", latlon);
         return "request/regRequest";
     }
+
+    @GetMapping("/requests/list")
+    public String listRequest() {
+        return "request/requests";
+    }
 }

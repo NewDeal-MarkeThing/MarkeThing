@@ -199,4 +199,7 @@ public class SiteUser implements UserDetails {
         this.point -= charge;
     }
 
+    public void updatePassword(String password) {
+        this.password = password;
+    }
 }
