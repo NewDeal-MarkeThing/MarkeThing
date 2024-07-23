@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -72,13 +73,14 @@
 
 <!-- 페이지 네비게이션을 표시할 영역 -->
 <div id="pagination-controls">
-    <button id="btn-prev">이전</button>
+    <button id="btn-prev-range">이전</button>
     <div id="pagination"></div>
-    <button id="btn-next">다음</button>
+    <button id="btn-next-range">다음</button>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="/static/js/request/requests.js"></script>
+<script src="/static/js/paging/paging.js"/>"></script>
+<script src="/static/js/request/requests.js"/>"></script>
 <script>
   $('#apply-filters').click(function() {
     index.loadPage(0, 5, "register");

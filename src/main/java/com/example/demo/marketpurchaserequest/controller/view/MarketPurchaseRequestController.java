@@ -32,8 +32,13 @@ public class MarketPurchaseRequestController {
         return "request/regRequest";
     }
 
-    @GetMapping("/requests/list")
-    public String listRequest() {
+    @GetMapping("/requests")
+    public String getRequests() {
         return "request/requests";
+    }
+
+    @GetMapping("/markets")
+    public String getMarkets() {
+        return "request/markets";
     }
 }

@@ -29,7 +29,7 @@ let index = {
                 arr.push($(this).val());
             });
             self.array = arr;
-            self.loadPage(page, size, sort);
+            self.loadMarkets(page, size, sort);
         });
         this.loadPage(page, size, sort);
     },
