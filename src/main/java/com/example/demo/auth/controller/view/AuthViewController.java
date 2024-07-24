@@ -13,10 +13,10 @@ public class AuthViewController {
 
     @GetMapping("/signup")
     public String signup() {
-        return "signup";
+        return "user/signup";
     }
     @GetMapping("/login")
     public String login() {
-        return "login";
+        return "user/login";
     }
 }

@@ -28,7 +28,6 @@ $(document).ready(function () {
   // 폼 제출 시 처리
   $("#updateForm").submit(function (event) {
     event.preventDefault(); // 기본 동작 중단
-
     var formData = {
       nickname: $("#nickname").val(),
       phoneNumber: $("#phoneNumber").val(),
@@ -37,7 +36,6 @@ $(document).ready(function () {
     };
     var token = localStorage.getItem('AuthToken');
     $.ajax({
-
       url: "/api/users", // 회원 정보 업데이트를 처리하는 API 엔드포인트
       type: 'PATCH',
       headers: {
