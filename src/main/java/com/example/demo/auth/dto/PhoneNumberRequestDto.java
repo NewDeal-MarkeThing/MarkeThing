@@ -13,4 +13,8 @@ import lombok.Setter;
 public class PhoneNumberRequestDto {
     private String phoneNumber;
     private String userEmail;
+
+    public PhoneNumberRequestDto(String number) {
+        this.phoneNumber = number;
+    }
 }

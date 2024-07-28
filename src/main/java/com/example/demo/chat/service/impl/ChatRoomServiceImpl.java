@@ -1,11 +1,13 @@
 package com.example.demo.chat.service.impl;
 
 import static com.example.demo.exception.type.ErrorCode.CHATROOM_NOT_FOUND;
+import static com.example.demo.exception.type.ErrorCode.EMAIL_NOT_FOUND;
 import static com.example.demo.exception.type.ErrorCode.REQUEST_NOT_FOUND;
 import static com.example.demo.exception.type.ErrorCode.USER_NOT_FOUND;
 
 import com.example.demo.chat.dto.ChatRoomRequestDto;
 import com.example.demo.chat.dto.ChatRoomResponseDto;
+import com.example.demo.chat.dto.ChatRoomStatusResponseDto;
 import com.example.demo.chat.entiity.ChatMessage;
 import com.example.demo.chat.entiity.ChatRoom;
 import com.example.demo.chat.repository.ChatMessageRepository;
@@ -49,25 +51,14 @@ public class ChatRoomServiceImpl implements ChatRoomService{
 
         MarketPurchaseRequest request = requestRepository.findById(chatRoomRequestDto.getRequestId())
                 .orElseThrow(() -> new MarkethingException(REQUEST_NOT_FOUND));
-
-        ChatRoom chatRoom = chatRoomRequestDto.toEntity(request, agent, requester);
-
+        ChatRoom chatRoom = chatRoomRequestDto.toEntity(request, requester, agent);
         return chatRoomRepository.save(chatRoom);
     }
-
     @Override
     @Transactional
-    public Long getPurchaseRequest(Long chatRoomId) {
-        ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
-                .orElseThrow(() -> new MarkethingException(CHATROOM_NOT_FOUND));
-        return chatRoom.getMarketPurchaseRequest().getId();
-    }
-
-    @Override
-    @Transactional
-    public List<ChatRoomResponseDto> getMyChatRooms(Long id) { //나의 아이디를 가져오는 거겠지
-        SiteUser siteUser = siteUserRepository.findById(id)
-                .orElseThrow(() -> new MarkethingException(USER_NOT_FOUND));
+    public List<ChatRoomResponseDto> getMyChatRooms(String email) { //나의 아이디를 가져오는 거겠지
+        SiteUser siteUser = siteUserRepository.findByEmail(email)
+                .orElseThrow(() -> new MarkethingException(EMAIL_NOT_FOUND));
         List<ChatRoom> agents = chatRoomRepository.findByAgentId(siteUser.getId()); // 대행 구매 희망자였던 채팅방
         List<ChatRoom> requesters = chatRoomRepository.findByRequesterId(siteUser.getId()); // 의뢰자일 때의 채팅방
         // 두 리스트를 합치고 중복을 제거하기 위한 TreeSet -> 생성순으로 오름차순으로 정렬을 함
@@ -100,10 +91,12 @@ public class ChatRoomServiceImpl implements ChatRoomService{
      */
     @Override
     @Transactional
-    public void deleteChatRoom(Long chatRoomId, Long userId) {
+    public void deleteChatRoom(Long chatRoomId, String email) {
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
                 .orElseThrow(() -> new MarkethingException(CHATROOM_NOT_FOUND));
-        if (chatRoom.getAgent().getId() == userId) {
+        SiteUser siteUser = siteUserRepository.findByEmail(email)
+                .orElseThrow(() -> new MarkethingException(EMAIL_NOT_FOUND));
+        if (chatRoom.getAgent().getId() == siteUser.getId()) {
             chatRoom.detachAgent();
         } else {
             chatRoom.detachRequester();
@@ -118,10 +111,14 @@ public class ChatRoomServiceImpl implements ChatRoomService{
         }
     }
     @Override
-    public int getChatRoomStatus(Long chatRoomId) {
+    public ChatRoomStatusResponseDto getChatRoomStatus(String email, Long chatRoomId) {
+        SiteUser siteUser = siteUserRepository.findByEmail(email)
+                .orElseThrow(() -> new MarkethingException(EMAIL_NOT_FOUND));
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
                 .orElseThrow(() -> new MarkethingException(CHATROOM_NOT_FOUND));
-        return chatRoom.getChatRoomStatus();
+        ChatRoomStatusResponseDto statusResponseDto = ChatRoomStatusResponseDto.fromEntity(
+                siteUser.getId(),chatRoom);
+        return statusResponseDto;
     }
     /*
     LocalDateTime을 hh:mm a 형식으로 반환해주는 메소드를 의미 이때 a는 오전, 오후가 표시됨

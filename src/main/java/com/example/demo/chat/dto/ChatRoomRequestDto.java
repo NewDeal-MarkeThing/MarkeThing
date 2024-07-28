@@ -23,7 +23,9 @@ public class ChatRoomRequestDto {
                 .marketPurchaseRequest(request)
                 .requester(requester)
                 .agent(agent)
+                .chatRoomStatus(2)
                 .build();
     }
+
 }
 
