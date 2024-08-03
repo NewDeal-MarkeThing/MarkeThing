@@ -10,10 +10,12 @@ import lombok.Getter;
 public class ChatRoomStatusResponseDto { // 채팅방의 상태를 불러오는 클래스
     private Long senderId;
     private int roomStatus;
+    private Long writerId;
     public static ChatRoomStatusResponseDto fromEntity(Long senderId, ChatRoom chatRoom) {
         return ChatRoomStatusResponseDto.builder()
                 .senderId(senderId)
                 .roomStatus(chatRoom.getChatRoomStatus())
+                .writerId(chatRoom.getMarketPurchaseRequest().getSiteUser().getId())
                 .build();
     }
 }

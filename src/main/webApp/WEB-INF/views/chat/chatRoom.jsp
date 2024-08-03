@@ -15,9 +15,11 @@
     </div>
 
     <div id="left-chat-room-msg" class="left-chat-room">상대방이 나갔습니다.</div>
+
+    <div id="confirm-appointment-container">
+        <button id="confirm-appointment-btn" style="display: none;">거래 진행하기</button>
+    </div>
 </div>
-
-
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>

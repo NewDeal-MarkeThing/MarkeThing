@@ -11,4 +11,5 @@ public interface ChatRoomService {
     List<ChatRoomResponseDto> getMyChatRooms(String email); // 내 아이디를 받아서 ChatRoom을 찾음
     void deleteChatRoom(Long chatRoomId, String email);
     ChatRoomStatusResponseDto getChatRoomStatus(String email, Long chatRoomId);
+    void confirmRequest(Long requestId);
 }

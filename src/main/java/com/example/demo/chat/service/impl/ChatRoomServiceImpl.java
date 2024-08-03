@@ -16,6 +16,7 @@ import com.example.demo.chat.service.ChatRoomService;
 import com.example.demo.exception.MarkethingException;
 import com.example.demo.marketpurchaserequest.entity.MarketPurchaseRequest;
 import com.example.demo.marketpurchaserequest.repository.MarketPurchaseRequestRepository;
+import com.example.demo.marketpurchaserequest.repository.MarketRepository;
 import com.example.demo.siteuser.entity.SiteUser;
 import com.example.demo.siteuser.repository.SiteUserRepository;
 import java.time.LocalDateTime;
@@ -39,6 +40,7 @@ public class ChatRoomServiceImpl implements ChatRoomService{
     private final SiteUserRepository siteUserRepository;
     private final MarketPurchaseRequestRepository requestRepository;
     private final ChatMessageRepository chatMessageRepository;
+
 
     @Override
     @Transactional
@@ -116,10 +118,21 @@ public class ChatRoomServiceImpl implements ChatRoomService{
                 .orElseThrow(() -> new MarkethingException(EMAIL_NOT_FOUND));
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
                 .orElseThrow(() -> new MarkethingException(CHATROOM_NOT_FOUND));
+
         ChatRoomStatusResponseDto statusResponseDto = ChatRoomStatusResponseDto.fromEntity(
                 siteUser.getId(),chatRoom);
         return statusResponseDto;
     }
+
+    @Override
+    @Transactional
+    public void confirmRequest(Long requestId) {
+        MarketPurchaseRequest marketPurchaseRequest = requestRepository.findById(requestId)
+                .orElseThrow(()-> new MarkethingException(REQUEST_NOT_FOUND));
+        // 요청글을 찾았다면 해당 글의 진행상황을 변경해 줌.
+        marketPurchaseRequest.changeStatus();
+    }
+
     /*
     LocalDateTime을 hh:mm a 형식으로 반환해주는 메소드를 의미 이때 a는 오전, 오후가 표시됨
     Local.KOREA --> (오전, 오후) Local.ENGLISH --> (AM, PM)

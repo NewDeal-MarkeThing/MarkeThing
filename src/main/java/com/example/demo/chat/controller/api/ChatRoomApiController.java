@@ -52,4 +52,8 @@ public class ChatRoomApiController {
     public void deleteChatRoom(Principal principal, @PathVariable("chatRoomId") Long chatRoomId){
         chatRoomService.deleteChatRoom(chatRoomId,principal.getName());
     }
+    @PostMapping("/api/chat/request/{requestId}")
+    public void confirmRequest(@PathVariable("requestId") Long requestId){
+        chatRoomService.confirmRequest(requestId);
+    }
 }

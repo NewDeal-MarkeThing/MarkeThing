@@ -75,16 +75,32 @@ function fetchChatMessages() {
   });
 }
 
+function confirmAppointment() {
+  $.ajax({
+    url: "/api/chat/request/"+chatRoomId,
+    type: 'POST',
+    success: function (response) {
+      alert("거래가 확정되었습니다.");
+    },
+    error: function (error) {
+      console.error('Error processing appointment:', error);
+      alert("거래 진행중에 오류가 발생했습니다: " + error.responseText);
+    }
+  });
+}
+
 const urlPath = window.location.pathname;
 const chatRoomId = urlPath.split('/').pop(); // URL의 마지막 부분에서 chatRoomId 추출
 // 전역 변수 선언
 let senderId;
 let roomStatus;
+let writerId;
+
 $(document).ready(function () {
   var token = localStorage.getItem('AuthToken');
   // 채팅방 상태 가져오기
   $.ajax({
-    url: "/api/chat/chatRoomStatus/"+chatRoomId, // 절대 경로로 변경
+    url: "/api/chat/chatRoomStatus/" + chatRoomId, // 절대 경로로 변경
     method: 'GET',
     headers: {
       'Authorization': token // 가져온 토큰을 Authorization 헤더에 포함
@@ -93,6 +109,8 @@ $(document).ready(function () {
       // 응답에서 senderId와 roomStatus를 전역 변수로 설정
       senderId = response.senderId;
       roomStatus = response.roomStatus;
+      writerId = response.writerId;
+
       // 채팅방 상태에 따른 UI 업데이트
       if (roomStatus === 1) {
         $('#msg').prop('disabled', true);
@@ -103,6 +121,11 @@ $(document).ready(function () {
         connect(); // 채팅 서버에 연결
         document.getElementById('messages').scrollTop = document.getElementById(
             'messages').scrollHeight;
+      }
+
+      // senderId와 writerId가 같을 경우 '약속 확정하기' 버튼 표시
+      if (senderId === writerId) {
+        $('#confirm-appointment-btn').show().on('click', confirmAppointment);
       }
     },
     error: function(error) {

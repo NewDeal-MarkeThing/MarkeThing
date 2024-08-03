@@ -105,4 +105,17 @@ public class MarketPurchaseRequest {
     @LastModifiedDate
     @Column(name = "UPDATED_AT")
     private LocalDateTime updatedAt;
+
+    /**
+     * 현재 모집중이라면 -> 거래 진행, 거래 진행 중이라면 거래 확정으로 상태를 변경
+     * 거래 확정 로직은 아직 구현이 안되 었기 때문에 추후에 구현 예정
+     */
+    public void changeStatus(){
+        if(purchaseRequestStatus == PurchaseRequestStatus.RECRUITING)
+            purchaseRequestStatus = PurchaseRequestStatus.IN_PROGRESS;
+        else if (purchaseRequestStatus == PurchaseRequestStatus.IN_PROGRESS) {
+            purchaseRequestStatus = PurchaseRequestStatus.COMPLETED;
+
+        }
+    }
 }
