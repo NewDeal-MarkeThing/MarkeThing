@@ -75,16 +75,16 @@ public class ChatApiControllerTest {
     @Test
     public void getMyChatroom() throws Exception {
         // given: 테스트 실행 준비
-        Long userId = 1L;
+        String email = "mock@mock.com";
         List<ChatRoomResponseDto> chatRoomResponseDtos = new ArrayList<>();
         chatRoomResponseDtos.add(getChatRoomResponseDto());
 
 
         // when: 테스트 진행 -> getMyChatRooms가 해당 dto를 뱉어 내도록 설정을 하는 것임!
-        when(chatRoomService.getMyChatRooms(userId)).thenReturn(chatRoomResponseDtos);
+        when(chatRoomService.getMyChatRooms(email)).thenReturn(chatRoomResponseDtos);
 
         // then: 테스트 검증
-        mockMvc.perform(get("/api/rooms/{userId}", userId)
+        mockMvc.perform(get("/api/rooms/{userId}", email)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].chatRoomId").value(1L))
@@ -98,14 +98,14 @@ public class ChatApiControllerTest {
     public void deleteMyChatRoom() throws Exception {
         Long chatRoomId = 1L;
         Long userId = 1L;
-
+        String email = "mock@mock.com";
         // When
-        mockMvc.perform(delete("/api/chat/rooms/{chatRoomId}/user/{userId}", chatRoomId, userId))
+        mockMvc.perform(delete("/api/chat/rooms/{chatRoomId}", chatRoomId, userId))
                 .andExpect(status().isOk());
         // delete: MockMvc에서 제공하는 메서드로, HTTP DELETE 요청을 생성하는 메서드임
 
         // Then
-        verify(chatRoomService, times(1)).deleteChatRoom(chatRoomId, userId);
+        verify(chatRoomService, times(1)).deleteChatRoom(chatRoomId, email);
     }
     private ChatRoomRequestDto getChatRoomRequestDto(){
         return ChatRoomRequestDto.builder()

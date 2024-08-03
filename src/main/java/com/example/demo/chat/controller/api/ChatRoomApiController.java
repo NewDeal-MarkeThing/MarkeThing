@@ -4,6 +4,7 @@ package com.example.demo.chat.controller.api;
 import com.example.demo.chat.dto.ChatMessageResponseDto;
 import com.example.demo.chat.dto.ChatRoomRequestDto;
 import com.example.demo.chat.dto.ChatRoomResponseDto;
+import com.example.demo.chat.dto.ChatRoomStatusResponseDto;
 import com.example.demo.chat.service.ChatMessageService;
 import com.example.demo.chat.service.ChatRoomService;
 import java.security.Principal;
@@ -29,21 +30,30 @@ public class ChatRoomApiController {
     @PostMapping("api/chat/rooms")
     public void createRoom(@RequestBody ChatRoomRequestDto chatRoomRequestDto) {
         chatRoomService.createChatRoom(chatRoomRequestDto);
-    }//생성을 함.
-    @GetMapping(value = "api/chat/rooms/{chatRoomId}/user/{userId}")
-    public List<ChatMessageResponseDto> getChatRoom(@PathVariable("chatRoomId") Long chatRoomId, @PathVariable("userId") Long userId) {
+    }
+    @GetMapping(value = "api/chat/rooms/{chatRoomId}")
+    public List<ChatMessageResponseDto> getChatRoom(@PathVariable("chatRoomId") Long chatRoomId) {
         List<ChatMessageResponseDto> chatMessageDtos = chatMessageService.getChatMessages(chatRoomId);
         return chatMessageDtos;
     }
-    // TODO: 헤더 값에서 email을 받아와서 userId를 넣어줌
-    @GetMapping("/api/chat/rooms/{userId}")
-    public ResponseEntity<List<ChatRoomResponseDto>> getMyChatRooms(@PathVariable("userId") Long userId) {
-        return ResponseEntity.ok(chatRoomService.getMyChatRooms(userId));
+    @GetMapping("/api/chat/rooms")
+    public ResponseEntity<List<ChatRoomResponseDto>> getMyChatRooms(Principal principal) {
+        String email = principal.getName();
+        return ResponseEntity.ok(chatRoomService.getMyChatRooms(email));
     }
-    //ToDo: UserId를 직접 받지 않고 HttpServletRequest에서 Service 단에서 반환 받기!
-    @DeleteMapping("/api/chat/rooms/{chatRoomId}/user/{userId}")
-    public void deleteChatRoom(@PathVariable("chatRoomId") Long chatRoomId,
-            @PathVariable("userId") Long userId){
-        chatRoomService.deleteChatRoom(chatRoomId,userId);
+
+    @GetMapping("/api/chat/chatRoomStatus/{chatRoomId}")
+    public ResponseEntity<ChatRoomStatusResponseDto> getChatRoomStatus(Principal principal,
+            @PathVariable("chatRoomId") Long chatRoomId) {
+        String email = principal.getName();
+        return ResponseEntity.ok(chatRoomService.getChatRoomStatus(email, chatRoomId));
+    }
+    @DeleteMapping("/api/chat/rooms/{chatRoomId}")
+    public void deleteChatRoom(Principal principal, @PathVariable("chatRoomId") Long chatRoomId){
+        chatRoomService.deleteChatRoom(chatRoomId,principal.getName());
+    }
+    @PostMapping("/api/chat/request/{requestId}")
+    public void confirmRequest(@PathVariable("requestId") Long requestId){
+        chatRoomService.confirmRequest(requestId);
     }
 }

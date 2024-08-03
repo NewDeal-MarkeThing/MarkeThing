@@ -105,20 +105,20 @@ public class ChatServiceTest {
     @DisplayName("나의 채팅방 목록을 불러오는 테스트")
     void getMyChatRooms(){
         // given
-        Long userId = 1L;
+        String email = "mock@mock.com";
         SiteUser siteUser = getAgent(); // 의뢰자로 찾는 것을 의미함
         ChatRoom chatRoom1 = getChatRoom(); // 채팅방을 지정을 함
         ChatRoom chatRoom2 = getChatRoom2(); // 채팅방을 지정을 함
         ChatMessage message = getChatMessage(); // 일단 1번 방에 있는 메시지가 있다는 것을 가정
 
-        when(siteUserRepository.findById(userId)).thenReturn(Optional.of(siteUser));
+        when(siteUserRepository.findByEmail(email)).thenReturn(Optional.of(siteUser));
         when(chatRoomRepository.findByAgentId(siteUser.getId())).thenReturn(Arrays.asList(chatRoom1));
         when(chatRoomRepository.findByRequesterId(siteUser.getId())).thenReturn(Arrays.asList(chatRoom2));
         when(chatMessageRepository.findFirstByChatRoomIdOrderByCreatedAtDesc(chatRoom1.getId())).thenReturn(message);
         // 일단 1번 채팅방에 존재하고 있는 채팅 메시지가 나온다고 가정을 함
 
         // when
-        List<ChatRoomResponseDto> chatRoomResponseDtos = chatRoomServiceImpl.getMyChatRooms(userId);
+        List<ChatRoomResponseDto> chatRoomResponseDtos = chatRoomServiceImpl.getMyChatRooms(email);
 
         // then
         assertNotNull(chatRoomResponseDtos);
@@ -133,13 +133,13 @@ public class ChatServiceTest {
     @DisplayName("나의 채팅방 조회 실패 테스트")
     void getFailedBySiteUserId() {
         // given
-        Long userId = 1L;
-        given(siteUserRepository.findById(userId))
+        String email = "mock@email.com";
+        given(siteUserRepository.findByEmail(email))
                 .willReturn(Optional.empty());
 
         // when
         MarkethingException exception = assertThrows(MarkethingException.class,
-                () -> chatRoomServiceImpl.getMyChatRooms(userId)); // 테스트 진행
+                () -> chatRoomServiceImpl.getMyChatRooms(email)); // 테스트 진행
 
         // then
         assertEquals(exception.getErrorCode(), ErrorCode.USER_NOT_FOUND);
@@ -154,7 +154,7 @@ public class ChatServiceTest {
         chatRoomList.add(chatRoom);
         when(chatRoomRepository.findById(chatRoom.getId())).thenReturn(Optional.of(chatRoom));
         // When
-        chatRoomServiceImpl.deleteChatRoom(chatRoom.getId(),agent.getId());
+        chatRoomServiceImpl.deleteChatRoom(chatRoom.getId(), agent.getEmail());
 
         // Then
         verify(chatRoomRepository, times(1)).findById(chatRoom.getId());
@@ -168,7 +168,7 @@ public class ChatServiceTest {
 
         // when
         MarkethingException exception = assertThrows(MarkethingException.class,
-                () -> chatRoomServiceImpl.deleteChatRoom(chatRoom.getId(),chatRoom.getAgent().getId()));
+                () -> chatRoomServiceImpl.deleteChatRoom(chatRoom.getId(),chatRoom.getAgent().getEmail()));
         // then
         assertEquals(exception.getErrorCode(), ErrorCode.CHATROOM_NOT_FOUND);
     }
